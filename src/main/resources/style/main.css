@@ -65,3 +65,29 @@
     -fx-fill: #555555;
     -fx-font-size: 12px;
 }
+.error-text {
+    -fx-fill: red;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+Thank-text{
+-fx-fill: green;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    }
+
+/* Button styling */
+.pdf-button {
+    -fx-background-color: #2a73ff;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8;
+
+}
+
+.pdf-button:hover {
+    -fx-background-color: #1d5fde;
+    cursor: hand;
+}

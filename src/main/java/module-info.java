@@ -1,6 +1,7 @@
 module org.akash.messcup {
     requires javafx.controls;
     requires javafx.fxml;
+    requires org.apache.pdfbox;
 
 
     opens org.akash.messcup to javafx.fxml;
