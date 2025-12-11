@@ -1,0 +1,67 @@
+/* fx.css - Modern JavaFX styling */
+
+/* Root AnchorPane background */
+.root {
+    -fx-background-color: #f0f2f5; /* light gray */
+
+}
+
+/* Card VBox */
+.vbox {
+    -fx-background-color: #ffffff; /* white card */
+    -fx-padding: 20;
+    -fx-spacing: 15;
+    -fx-alignment: top_center;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.5, 0, 2);
+}
+
+/* Image */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0.5, 0, 2);
+    -fx-background-radius: 50%;
+}
+
+/* Text Headers */
+.text {
+    -fx-fill: #333333;
+    -fx-font-family: "Arial";
+}
+
+/* Headings */
+.text .header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ChoiceBox styling */
+.choice-box {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5 10 5 10;
+}
+
+/* TextField styling */
+.text-field {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5 10 5 10;
+}
+
+/* Hover effect */
+.choice-box:hover,
+.text-field:hover {
+    -fx-border-color: #5b9bd5;
+    -fx-background-color: #ffffff;
+}
+
+/* Summary Text */
+.summary-text {
+    -fx-fill: #555555;
+    -fx-font-size: 12px;
+}
