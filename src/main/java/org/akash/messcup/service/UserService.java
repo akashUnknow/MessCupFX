@@ -4,14 +4,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class UserService {
+    Logger logger = Logger.getLogger(getClass().getName());
     private HashMap<String, String> employeeMap = new HashMap<>();
-    private final String filePath="C:/Mess/userData.txt";
 
 
     public UserService() {
+        String filePath = "C:/Mess/userData.txt";
         loadEmployeeData(filePath);
     }
 
@@ -33,10 +35,10 @@ public class UserService {
                 }
 
             }
-            System.out.println("Employee data loaded: " + employeeMap.size());
+            logger.info("Employee data loaded: " + employeeMap.size());
 
         }catch (Exception e){
-            System.out.println("Error loading employee data: "+e.getMessage());
+            logger.info("Error loading employee data: "+e.getMessage());
         }
     }
 }

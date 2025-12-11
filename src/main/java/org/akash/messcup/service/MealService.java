@@ -19,6 +19,7 @@ public class MealService {
     private int cupCount;
     private final String path="C:/Mess/mealData.txt";
     private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
+    Logger logger = Logger.getLogger(getClass().getName());
     LocalDate today = LocalDate.now();
     public String  setCupCount(String id, String mealTime, String empName) {
         if(empName.equals("Unknown Employee")){
@@ -62,7 +63,7 @@ public class MealService {
         String pdfPath = "C:/Mess/" + today + "/mealReport.pdf";
         Path pdfpath = Paths.get("C:/Mess/" + today);
         // Implementation to generate PDF report
-        try {
+        try ( PDDocument document = new PDDocument()){
             // Read all lines from txt
             List<String> lines = Files.readAllLines(Paths.get(path));
 
@@ -71,7 +72,7 @@ public class MealService {
             }
 
             // Create new PDF
-            PDDocument document = new PDDocument();
+
             PDPage page = new PDPage();
             document.addPage(page);
 
@@ -101,15 +102,14 @@ public class MealService {
 
             content.close();
             document.save(pdfPath);
-            document.close();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Your PDF has been created at:\n" + pdfPath);
             alert.showAndWait();
 
-            System.out.println("PDF created successfully at: " + pdfPath);
+            logger.info("PDF created successfully");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error occurred", e);
         }
     }
 }
