@@ -1,23 +1,24 @@
 package org.akash.messcup.service;
 
 import javafx.scene.control.Alert;
+import org.akash.messcup.controllers.MainController;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MealService {
     private int cupCount;
-    private String path="C:/Mess/mealData.txt";
-    private String pdfPath;
+    private final String path="C:/Mess/mealData.txt";
+    private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
     LocalDate today = LocalDate.now();
     public String  setCupCount(String id, String mealTime, String empName) {
         if(empName.equals("Unknown Employee")){
@@ -26,10 +27,11 @@ public class MealService {
         // Implementation to set cup count
         try {
 
-            if (Files.notExists(Paths.get(path))) {
-                Files.createFile(Paths.get(path));
+            Path path1 = Paths.get(path);
+            if (Files.notExists(path1)) {
+                Files.createFile(path1);
             }
-            List<String> lines = Files.readAllLines(Paths.get(path));
+            List<String> lines = Files.readAllLines(path1);
             boolean exists=lines.stream()
                             .anyMatch(line->line.startsWith(id + "|") && line.contains("|" + mealTime + "|" + today + "|"));
             if(exists){
@@ -41,11 +43,11 @@ public class MealService {
             String entry = id + "|" + empName + "|" + mealTime +"|"+ today +"|"+ cupCount + "\n";
 
 
-            Files.write(Paths.get(path),entry.getBytes(), StandardOpenOption.APPEND);
+            Files.write(path1,entry.getBytes(), StandardOpenOption.APPEND);
             return "";
 
         }catch (Exception e){
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error occurred", e);
             return "Error saving data: " + e.getMessage();
         }
         
@@ -58,14 +60,14 @@ public class MealService {
 
     public void generatePdfReport() {
         String pdfPath = "C:/Mess/" + today + "/mealReport.pdf";
-        Path PDFpath = Paths.get("C:/Mess/" + today);
+        Path pdfpath = Paths.get("C:/Mess/" + today);
         // Implementation to generate PDF report
         try {
             // Read all lines from txt
             List<String> lines = Files.readAllLines(Paths.get(path));
 
-            if (Files.notExists(PDFpath)) {
-                Files.createDirectories(PDFpath);   // creates all missing folders
+            if (Files.notExists(pdfpath)) {
+                Files.createDirectories(pdfpath);   // creates all missing folders
             }
 
             // Create new PDF

@@ -1,7 +1,6 @@
 package org.akash.messcup.service;
 
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
+
 import org.akash.messcup.menuDto.MenuDto;
 
 import java.io.IOException;

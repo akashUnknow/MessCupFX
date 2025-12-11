@@ -2,10 +2,10 @@ package org.akash.messcup.menuDto;
 
 
 public class MenuDto {
-    private String day;
-    private String breakfast;
-    private String lunch;
-    private String dinner;
+    private final String day;
+    private final String breakfast;
+    private final String lunch;
+    private final String dinner;
 
     public MenuDto(String day, String breakfast, String lunch, String dinner) {
         this.day = day;

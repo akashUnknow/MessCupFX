@@ -96,3 +96,11 @@ Thank-text{
     -fx-alignment: CENTER-LEFT;   /* Align header text to the left */
     -fx-padding: 0 0 0 10;        /* Optional: add left padding */
 }
+
+.table-view .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
+    -fx-min-height: 0;
+    visibility: hidden;
+}
