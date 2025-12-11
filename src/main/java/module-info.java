@@ -8,4 +8,5 @@ module org.akash.messcup {
     exports org.akash.messcup;
     opens org.akash.messcup.controllers to javafx.fxml;
     exports org.akash.messcup.controllers;
+    exports org.akash.messcup.menuDto;
 }

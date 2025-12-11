@@ -14,7 +14,7 @@ public class MealTime {
             return Time.BREAKFAST.name();
         } else if (time.isAfter(LocalTime.of(12, 0)) && time.isBefore(LocalTime.of(15, 0))) {
             return Time.LUNCH.name();
-        } else if (time.isAfter(LocalTime.of(18, 0)) && time.isBefore(LocalTime.of(21, 0))) {
+        } else if (time.isAfter(LocalTime.of(18, 0)) && time.isBefore(LocalTime.of(22, 0))) {
             return Time.DINNER.name();
         } else {
             return "No meal time currently";

@@ -12,6 +12,8 @@
 <?import javafx.scene.text.Text?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 <AnchorPane
         xmlns="http://javafx.com/javafx/25"
         xmlns:fx="http://javafx.com/fxml/1"
@@ -44,8 +46,8 @@
         <!-- ID Section -->
         <VBox alignment="CENTER_LEFT" spacing="10" VBox.vgrow="NEVER">
             <Text styleClass="header" text="ID" />
-            <ChoiceBox fx:id="idChoiceBox" maxWidth="Infinity" styleClass="choice-box" />
-            <TextField fx:id="idField" maxWidth="Infinity" promptText="Enter ID" styleClass="text-field" />
+            <ChoiceBox fx:id="idChoiceBox" maxWidth="200" styleClass="choice-box" />
+            <TextField fx:id="idField" maxWidth="200" promptText="Enter ID" styleClass="text-field" />
         </VBox>
         <Text fx:id="errorMessage"
               styleClass="error-text"
@@ -59,12 +61,12 @@
 
             <VBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
                 <Text styleClass="header" text="Employee Name" />
-                <TextField fx:id="empNameField" maxWidth="Infinity" promptText="Employee Name" styleClass="text-field" />
+                <TextField fx:id="empNameField" maxWidth="Infinity" promptText="Employee Name" styleClass="text-field"  disable="true"/>
             </VBox>
 
             <VBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
                 <Text styleClass="header" text="Employee ID" />
-                <TextField fx:id="empIdField" maxWidth="Infinity" promptText="Employee ID" styleClass="text-field" />
+                <TextField fx:id="empIdField" maxWidth="Infinity" promptText="Employee ID" styleClass="text-field" disable="true" />
             </VBox>
 
         </HBox>
@@ -82,12 +84,34 @@
         </VBox>
 
         <!-- Summary -->
-        <VBox alignment="CENTER_LEFT" spacing="5" VBox.vgrow="ALWAYS">
-            <Text fx:id="summaryEmpName" styleClass="summary-text" text="Employee Name" />
-            <Text fx:id="summaryEmpId" styleClass="summary-text" text="Employee ID" />
-            <Text fx:id="summaryMeal" styleClass="summary-text" text="Meal Time" />
-            <Text fx:id="summaryCount" styleClass="summary-text" text="Number of coupons used per day" />
-        </VBox>
+        <!-- Summary + Menu Side by Side -->
+        <HBox spacing="40" alignment="TOP_CENTER" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+
+            <!-- Summary Section -->
+            <VBox alignment="CENTER_LEFT" spacing="5" HBox.hgrow="ALWAYS">
+                <Text fx:id="summaryEmpName" styleClass="summary-text" text="Employee Name" />
+                <Text fx:id="summaryEmpId" styleClass="summary-text" text="Employee ID" />
+                <Text fx:id="summaryMeal" styleClass="summary-text" text="Meal Time" />
+                <Text fx:id="summaryCount" styleClass="summary-text" text="Number of coupons used per day" />
+            </VBox>
+
+            <!-- Menu Table Section -->
+            <VBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+                <Text styleClass="header" text="Today's Menu" />
+
+                <TableView fx:id="menuTable" >
+
+                    <columns>
+                        <TableColumn fx:id="Day" text="Day" prefWidth="150"/>
+                        <TableColumn fx:id="Breakfast" text="Breakfast" prefWidth="100"/>
+                        <TableColumn fx:id="Lunch" text="Lunch" prefWidth="100"/>
+                        <TableColumn fx:id="Dinner" text="Dinner" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+        </HBox>
+
         <Button fx:id="exportPdfButton"
                 text="Export to PDF"
                 styleClass="pdf-button"
