@@ -34,10 +34,16 @@ public class MenuController implements Initializable {
         this.onMenuSaved = onMenuSaved;
     }
     public void saveMenu() {
-        menuService.setMenu(breakfastField.textProperty(),
+        boolean success = menuService.setMenu(
+                breakfastField.textProperty(),
                 lunchField.textProperty(),
                 dinnerField.textProperty(),
-                dayChoice.getValue().toString());
+                dayChoice.getValue().toString()
+        );
+        if (!success) {
+            return;
+        }
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText("Menu updated successfully!");
         alert.showAndWait();

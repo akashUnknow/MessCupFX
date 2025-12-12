@@ -4,6 +4,7 @@ package org.akash.messcup.service;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.akash.messcup.controllers.MainController;
@@ -45,7 +46,7 @@ public class MenuService {
             FXMLLoader loader=new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
             Scene scene=new Scene(loader.load());
             MenuController controller = loader.getController();
-            controller.setOnMenuSaved(() -> mainController.refreshMenuTable());
+            controller.setOnMenuSaved(mainController::refreshMenuTable);
             Stage stage=new Stage();
             stage.setScene(scene);
             stage.setTitle("Mess Cup");
@@ -58,8 +59,24 @@ public class MenuService {
 
     }
 
-    public void setMenu(StringProperty brk, StringProperty luc, StringProperty din, String day) {
+    public Boolean setMenu(StringProperty brk, StringProperty luc, StringProperty din, String day) {
         try {
+            if (day == null || day.trim().isEmpty()) {
+                showWarning("Day cannot be empty.");
+                return false;
+            }
+            if (brk.get() == null || brk.get().trim().isEmpty()) {
+                showWarning("Breakfast cannot be empty.");
+                return false;
+            }
+            if (luc.get() == null || luc.get().trim().isEmpty()) {
+                showWarning("Lunch cannot be empty.");
+                return false;
+            }
+            if (din.get() == null || din.get().trim().isEmpty()) {
+                showWarning("Dinner cannot be empty.");
+                return false;
+            }
             Path path = Paths.get(filePath);
             List<String> lines = Files.readAllLines(path);
 
@@ -84,10 +101,18 @@ public class MenuService {
             }
 
             Files.write(path, lines);
+            return true; // success
 
-        } catch (Exception e) {
+        }catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    private void showWarning(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Validation Failed");
+        alert.setHeaderText("Invalid Menu Data");
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }
