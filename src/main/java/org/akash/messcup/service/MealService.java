@@ -17,10 +17,10 @@ import java.util.logging.Logger;
 
 public class MealService {
     private int cupCount;
-    private final String path="C:/Mess/mealData.txt";
     private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
     Logger logger = Logger.getLogger(getClass().getName());
     LocalDate today = LocalDate.now();
+    private String path="C:/Mess/" + today + "/mealData.txt";
     public String  setCupCount(String id, String mealTime, String empName) {
         if(empName.equals("Unknown Employee")){
             return "Unknown Employee!";
@@ -29,6 +29,10 @@ public class MealService {
         try {
 
             Path path1 = Paths.get(path);
+            Path parentDir = path1.getParent();
+            if (Files.notExists(parentDir)) {
+                Files.createDirectories(parentDir);
+            }
             if (Files.notExists(path1)) {
                 Files.createFile(path1);
             }
@@ -39,7 +43,7 @@ public class MealService {
                 return "Duplicate entry! User already exists.";
             }
             cupCount=(int)lines.stream()
-                            .filter(line->line.startsWith(id + "|") && line.contains("|" + mealTime + "|" + today + "|"))
+                            .filter(line->line.contains(today + "|"))
                                     .count()+1;
             String entry = id + "|" + empName + "|" + mealTime +"|"+ today +"|"+ cupCount + "\n";
 
