@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.akash.messcup.controllers.MainController">
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.akash.messcup.controllers.MainController">
 
     <stylesheets>
         <URL value="@../style/main.css" />
@@ -37,10 +29,10 @@
             <Region HBox.hgrow="ALWAYS" />
 
             <!-- Table -->
-            <TableView prefHeight="170.0" prefWidth="300.0" fx:id="menuTime">
+            <TableView fx:id="menuTime" prefHeight="170.0" prefWidth="300.0">
                 <columns>
-                    <TableColumn prefWidth="150.0" text="Meal" fx:id="meal" />
-                    <TableColumn prefWidth="150.0" text="Time" fx:id="time" />
+                    <TableColumn fx:id="meal" prefWidth="150.0" text="Meal" />
+                    <TableColumn fx:id="time" prefWidth="150.0" text="Time" />
                 </columns>
             <HBox.margin>
                <Insets right="350.0" />
@@ -109,7 +101,17 @@
 
         </HBox>
 
-        <Button fx:id="exportPdfButton" maxWidth="200" onAction="#exportPdf" styleClass="pdf-button" text="Export to PDF" />
+        <HBox prefHeight="37.0" prefWidth="400">
+            <Button fx:id="exportPdfButton" maxWidth="200" onAction="#exportPdf" styleClass="pdf-button" text="Export to PDF" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="setMenuButton" maxWidth="200" onAction="#setMenu" styleClass="pdf-button" text="Set Menu">
+            <HBox.margin>
+               <Insets left="50.0" />
+            </HBox.margin></Button>
+         <padding>
+            <Insets left="400.0" />
+         </padding>
+        </HBox>
 
     </VBox>
 

@@ -44,12 +44,15 @@ public class MainController implements Initializable {
     public TableColumn<MenuTimeDto,String> time;
     public TableColumn<MenuTimeDto,String> meal;
     public TableView<MenuTimeDto> menuTime;
+    public Button setMenuButton;
+
 
 
     UserService userService=new UserService();
     MealService mealService=new MealService();
     MenuService menuService=new MenuService();
     MealTime mealTime=new MealTime();
+
 
 
     @Override
@@ -68,7 +71,7 @@ public class MainController implements Initializable {
         breakfast.setCellValueFactory(new PropertyValueFactory<>("breakfast"));
         lunch.setCellValueFactory(new PropertyValueFactory<>("lunch"));
         dinner.setCellValueFactory(new PropertyValueFactory<>("dinner"));
-        List<MenuDto> menuList = menuService.setMenu();
+        List<MenuDto> menuList = menuService.loadMenu();
         menuTable.getItems().setAll(menuList);
 //       logic
         idField.textProperty().addListener((_, _, newVal) -> {
@@ -118,4 +121,16 @@ public class MainController implements Initializable {
     public void exportPdf() {
         mealService.generatePdfReport();
     }
+
+    public void setMenu() {
+        menuService.showMenu(this);
+
+    }
+    public void refreshMenuTable() {
+        List<MenuDto> menuList = menuService.loadMenu();
+        menuTable.getItems().setAll(menuList);
+    }
+
+
+
 }

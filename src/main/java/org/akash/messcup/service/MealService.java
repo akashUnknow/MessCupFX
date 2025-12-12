@@ -1,5 +1,6 @@
 package org.akash.messcup.service;
 
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
 import org.akash.messcup.controllers.MainController;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -116,4 +117,6 @@ public class MealService {
             LOGGER.log(Level.SEVERE, "Error occurred", e);
         }
     }
+
+
 }

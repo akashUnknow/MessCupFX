@@ -1,21 +1,30 @@
 package org.akash.messcup.service;
 
 
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.akash.messcup.controllers.MainController;
+import org.akash.messcup.controllers.MenuController;
 import org.akash.messcup.menuDto.MenuDto;
 
 import java.io.IOException;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MenuService {
+    String filePath="C:/Mess/menu.txt";
 
-    public List<MenuDto> setMenu() {
+    public List<MenuDto> loadMenu() {
         List<MenuDto> menuList=new ArrayList<>();
-        String filePath="C:/Mess/menu.txt";
+
         try {
             List<String> lines= Files.readAllLines(Paths.get(filePath));
 
@@ -30,4 +39,55 @@ public class MenuService {
             throw new RuntimeException(e);
         }
     }
+
+    public void showMenu(MainController mainController) {
+        try {
+            FXMLLoader loader=new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
+            Scene scene=new Scene(loader.load());
+            MenuController controller = loader.getController();
+            controller.setOnMenuSaved(() -> mainController.refreshMenuTable());
+            Stage stage=new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Mess Cup");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void setMenu(StringProperty brk, StringProperty luc, StringProperty din, String day) {
+        try {
+            Path path = Paths.get(filePath);
+            List<String> lines = Files.readAllLines(path);
+
+            String newEntry = day + "|" + brk.get() + "|" + luc.get() + "|" + din.get();
+
+            // Find the index of the line to replace
+            int index = -1;
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).startsWith(day + "|")) {
+                    index = i;
+                    break;
+                }
+            }
+
+            // Replace OR Add at correct index
+            if (index != -1) {
+                // Replace existing line
+                lines.set(index, newEntry);
+            } else {
+                // Day not found → add at the end
+                lines.add(newEntry);
+            }
+
+            Files.write(path, lines);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

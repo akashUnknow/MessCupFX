@@ -3,6 +3,7 @@ module org.akash.messcup {
     requires javafx.fxml;
     requires org.apache.pdfbox;
     requires java.logging;
+    requires javafx.graphics;
 
 
     opens org.akash.messcup to javafx.fxml;
