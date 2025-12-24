@@ -87,7 +87,7 @@ public class MainController implements Initializable {
         List<MenuDto> menuList = menuService.loadMenu();
         menuTable.getItems().setAll(menuList);
 //       logic
-        idField.textProperty().addListener((_, _, newVal) -> {
+        idField.textProperty().addListener((a, b, newVal) -> {
             if (newVal != null && !newVal.isEmpty()) {
                 empName = userService.getEmpNameById(newVal);
                 empNameField.setText(empName);
