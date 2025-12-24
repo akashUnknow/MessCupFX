@@ -10,10 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import org.akash.messcup.menuDto.MenuDto;
 import org.akash.messcup.menuDto.MenuTimeDto;
-import org.akash.messcup.service.MealService;
-import org.akash.messcup.service.MealTime;
-import org.akash.messcup.service.MenuService;
-import org.akash.messcup.service.UserService;
+import org.akash.messcup.service.*;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -59,6 +56,22 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         idChoiceBox.setValue("Employee ID");
         mealTimeChoice.setValue(MealTime.getCurrentMealTime());
+        // 🔹 Start Card Reader in background thread
+        CardReader cardReader = new CardReader(uid -> {
+            if (uid.equals("NO_READER") || uid.equals("ERROR")) {
+                Platform.runLater(() ->
+                        errorMessage.setText("Card reader error"));
+                return;
+            }
+            // 🔹 Update JavaFX UI safely
+            Platform.runLater(() -> {
+                idField.setText(uid); //  THIS triggers your existing logic
+            });
+        });
+        Thread cardThread = new Thread(cardReader);
+        cardThread.setDaemon(true);
+        cardThread.start();
+
         //set meal table
         time.setCellValueFactory(new PropertyValueFactory<>("time"));
         meal.setCellValueFactory(new PropertyValueFactory<>("meal"));

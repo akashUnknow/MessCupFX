@@ -4,6 +4,7 @@ module org.akash.messcup {
     requires org.apache.pdfbox;
     requires java.logging;
     requires javafx.graphics;
+    requires java.smartcardio;
 
 
     opens org.akash.messcup to javafx.fxml;
