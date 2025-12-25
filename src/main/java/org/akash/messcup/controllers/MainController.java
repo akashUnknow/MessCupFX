@@ -28,7 +28,7 @@ public class MainController implements Initializable {
     static {
         try {
             Files.createDirectories(Path.of("logs"));
-            FileHandler fileHandler = new FileHandler("logs/messcup.log", true);
+            FileHandler fileHandler = new FileHandler("logs/messcup.log", 0, 1, true);
             fileHandler.setFormatter(new SimpleFormatter());
             LOGGER.addHandler(fileHandler);
             LOGGER.setLevel(Level.ALL);
@@ -83,7 +83,6 @@ public class MainController implements Initializable {
 
             /* ===================== CARD READER ===================== */
             CardReader cardReader = new CardReader(uid -> {
-                LOGGER.info("Card detected UID: " + uid);
 
                 if ("NO_READER".equals(uid) || "ERROR".equals(uid)) {
                     LOGGER.warning("Card reader error");
@@ -116,14 +115,12 @@ public class MainController implements Initializable {
                 if (newVal == null || newVal.isEmpty()) return;
 
                 try {
-                    LOGGER.info("Employee ID entered: " + newVal);
 
                     String empName = userService.getEmpNameById(newVal);
                     empNameField.setText(empName);
                     empIdField.setText(newVal);
 
                     if ("No meal time currently".equals(mealTimeChoice.getValue())) {
-                        LOGGER.warning("No meal time active");
                         new Alert(Alert.AlertType.INFORMATION, "No meal time currently").showAndWait();
                         return;
                     }
@@ -131,7 +128,6 @@ public class MainController implements Initializable {
                     String result = "";
                     if (!"Unknown Employee".equals(empName) && newVal.length() >= 3) {
                         result = mealService.setCupCount(newVal, mealTimeChoice.getValue(), empName);
-                        LOGGER.info("Meal service result: " + result);
                     }
 
                     if (result != null && !result.isEmpty()) {
@@ -178,12 +174,10 @@ public class MainController implements Initializable {
     }
 
     public void setMenu() {
-        LOGGER.info("Set menu clicked");
         menuService.showMenu(this);
     }
 
     public void refreshMenuTable() {
-        LOGGER.info("Refreshing menu table");
         menuTable.getItems().setAll(menuService.loadMenu());
     }
 }

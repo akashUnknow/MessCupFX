@@ -19,7 +19,7 @@ public class MenuController implements Initializable {
 
     static {
         try {
-            FileHandler fh = new FileHandler("logs/messcup.log", true);
+            FileHandler fh = new FileHandler("logs/messcup.log", 0, 1, true);
             fh.setFormatter(new SimpleFormatter());
             LOGGER.addHandler(fh);
             LOGGER.setLevel(Level.ALL);
