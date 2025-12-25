@@ -14,11 +14,30 @@ import org.akash.messcup.service.*;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.*;
 
 public class MainController implements Initializable {
 
+    /* ===================== LOGGER ===================== */
+    private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
+
+    static {
+        try {
+            Files.createDirectories(Path.of("logs"));
+            FileHandler fileHandler = new FileHandler("logs/messcup.log", true);
+            fileHandler.setFormatter(new SimpleFormatter());
+            LOGGER.addHandler(fileHandler);
+            LOGGER.setLevel(Level.ALL);
+        } catch (Exception e) {
+            e.printStackTrace(); // last fallback
+        }
+    }
+
+    /* ===================== UI ===================== */
     public ImageView cardImage;
     public ChoiceBox<String> idChoiceBox;
     public TextField idField;
@@ -29,7 +48,6 @@ public class MainController implements Initializable {
     public Text summaryEmpId;
     public Text summaryMeal;
     public Text summaryCount;
-    public String empName;
     public Text errorMessage;
     public Text thanksMessage;
     public Button exportPdfButton;
@@ -43,107 +61,129 @@ public class MainController implements Initializable {
     public TableView<MenuTimeDto> menuTime;
     public Button setMenuButton;
 
-
-
-    UserService userService=new UserService();
-    MealService mealService=new MealService();
-    MenuService menuService=new MenuService();
-    MealTime mealTime=new MealTime();
-
-
+    /* ===================== SERVICES ===================== */
+    UserService userService = new UserService();
+    MealService mealService = new MealService();
+    MenuService menuService = new MenuService();
+    MealTime mealTime = new MealTime();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        idChoiceBox.setValue("Employee ID");
-        mealTimeChoice.setValue(MealTime.getCurrentMealTime());
-        // 🔹 Start Card Reader in background thread
-        CardReader cardReader = new CardReader(uid -> {
-            if (uid.equals("NO_READER") || uid.equals("ERROR")) {
-                Platform.runLater(() ->
-                        errorMessage.setText("Card reader error"));
-                return;
-            }
-            // 🔹 Update JavaFX UI safely
-            Platform.runLater(() -> {
-                idField.setText(uid); //  THIS triggers your existing logic
-            });
+
+        LOGGER.info("MessCup application started");
+
+        // Catch ALL uncaught exceptions (VERY IMPORTANT FOR EXE)
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            LOGGER.log(Level.SEVERE, "Unhandled exception in thread: " + t.getName(), e);
         });
-        Thread cardThread = new Thread(cardReader);
-        cardThread.setDaemon(true);
-        cardThread.start();
 
-        //set meal table
-        time.setCellValueFactory(new PropertyValueFactory<>("time"));
-        meal.setCellValueFactory(new PropertyValueFactory<>("meal"));
-        List<MenuTimeDto> mealList=mealTime.setMealList();
-        menuTime.getItems().setAll(mealList);
+        try {
+            idChoiceBox.setValue("Employee ID");
+            mealTimeChoice.setValue(MealTime.getCurrentMealTime());
 
-        // BIND MENU TABLE COLUMNS
-        menuTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        day.setCellValueFactory(new PropertyValueFactory<>("day"));
-        breakfast.setCellValueFactory(new PropertyValueFactory<>("breakfast"));
-        lunch.setCellValueFactory(new PropertyValueFactory<>("lunch"));
-        dinner.setCellValueFactory(new PropertyValueFactory<>("dinner"));
-        List<MenuDto> menuList = menuService.loadMenu();
-        menuTable.getItems().setAll(menuList);
-//       logic
-        idField.textProperty().addListener((a, b, newVal) -> {
-            if (newVal != null && !newVal.isEmpty()) {
-                empName = userService.getEmpNameById(newVal);
-                empNameField.setText(empName);
-                empIdField.setText(newVal);
+            /* ===================== CARD READER ===================== */
+            CardReader cardReader = new CardReader(uid -> {
+                LOGGER.info("Card detected UID: " + uid);
 
-                String result = "";
-                if (mealTimeChoice.getValue().equals("No meal time currently")){
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setContentText("No meal time currently");
-                    alert.showAndWait();
+                if ("NO_READER".equals(uid) || "ERROR".equals(uid)) {
+                    LOGGER.warning("Card reader error");
+                    Platform.runLater(() -> errorMessage.setText("Card reader error"));
                     return;
                 }
 
-                if (!empName.equals("Unknown Employee") && newVal.length() >= 3) {
-                    result = mealService.setCupCount(newVal, mealTimeChoice.getValue(), empName);
-                }
+                Platform.runLater(() -> idField.setText(uid));
+            });
 
-                if(result != null && !result.isEmpty()){
-                    thanksMessage.setText("");
-                    errorMessage.setText(result);
-                    // Show cross image
-                    InputStream is = getClass().getResourceAsStream("/fxml/images/cross.jpg");
-                    if(is != null) cardImage.setImage(new Image(is));
-                    Platform.runLater(()->idField.setText(""));
-                }
-                if (result.equals("") && !empName.equals("Unknown Employee")) {
+            Thread cardThread = new Thread(cardReader, "CardReader-Thread");
+            cardThread.setDaemon(true);
+            cardThread.start();
+
+            /* ===================== MEAL TIME TABLE ===================== */
+            time.setCellValueFactory(new PropertyValueFactory<>("time"));
+            meal.setCellValueFactory(new PropertyValueFactory<>("meal"));
+            menuTime.getItems().setAll(mealTime.setMealList());
+
+            /* ===================== MENU TABLE ===================== */
+            menuTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            day.setCellValueFactory(new PropertyValueFactory<>("day"));
+            breakfast.setCellValueFactory(new PropertyValueFactory<>("breakfast"));
+            lunch.setCellValueFactory(new PropertyValueFactory<>("lunch"));
+            dinner.setCellValueFactory(new PropertyValueFactory<>("dinner"));
+            menuTable.getItems().setAll(menuService.loadMenu());
+
+            /* ===================== MAIN LOGIC ===================== */
+            idField.textProperty().addListener((a, b, newVal) -> {
+                if (newVal == null || newVal.isEmpty()) return;
+
+                try {
+                    LOGGER.info("Employee ID entered: " + newVal);
+
+                    String empName = userService.getEmpNameById(newVal);
+                    empNameField.setText(empName);
+                    empIdField.setText(newVal);
+
+                    if ("No meal time currently".equals(mealTimeChoice.getValue())) {
+                        LOGGER.warning("No meal time active");
+                        new Alert(Alert.AlertType.INFORMATION, "No meal time currently").showAndWait();
+                        return;
+                    }
+
+                    String result = "";
+                    if (!"Unknown Employee".equals(empName) && newVal.length() >= 3) {
+                        result = mealService.setCupCount(newVal, mealTimeChoice.getValue(), empName);
+                        LOGGER.info("Meal service result: " + result);
+                    }
+
+                    if (result != null && !result.isEmpty()) {
+                        errorMessage.setText(result);
+                        thanksMessage.setText("");
+                        loadImage("/fxml/images/cross.jpg");
+                        Platform.runLater(() -> idField.setText(""));
+                    } else if (!"Unknown Employee".equals(empName)) {
                         errorMessage.setText("");
                         thanksMessage.setText("Thank you " + empName + "!");
                         summaryEmpName.setText("Employee Name : " + empName);
                         summaryEmpId.setText("Employee ID : " + newVal);
                         summaryMeal.setText("Meal Time : " + mealTimeChoice.getValue());
-                        int count = mealService.getCupCount();
-                        summaryCount.setText("Number of coupons used per day : " + count);
-                        // Show user image
-                        InputStream is = getClass().getResourceAsStream("/fxml/images/user.jpg");
-                        if(is != null) cardImage.setImage(new Image(is));
-                    Platform.runLater(()->idField.setText(""));
-                }
-            }
-        });
+                        summaryCount.setText("Number of coupons used per day : " + mealService.getCupCount());
+                        loadImage("/fxml/images/user.jpg");
+                        Platform.runLater(() -> idField.setText(""));
+                    }
 
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "Error processing employee ID", ex);
+                }
+            });
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Initialization failed", e);
+        }
+    }
+
+    private void loadImage(String path) {
+        try (InputStream is = getClass().getResourceAsStream(path)) {
+            if (is != null) cardImage.setImage(new Image(is));
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Failed to load image: " + path, e);
+        }
     }
 
     public void exportPdf() {
-        mealService.generatePdfReport();
+        try {
+            LOGGER.info("Export PDF clicked");
+            mealService.generatePdfReport();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "PDF generation failed", e);
+        }
     }
 
     public void setMenu() {
+        LOGGER.info("Set menu clicked");
         menuService.showMenu(this);
-
     }
+
     public void refreshMenuTable() {
-        List<MenuDto> menuList = menuService.loadMenu();
-        menuTable.getItems().setAll(menuList);
+        LOGGER.info("Refreshing menu table");
+        menuTable.getItems().setAll(menuService.loadMenu());
     }
-
-
-
 }
