@@ -3,10 +3,12 @@ package org.akash.messcup;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.logging.*;
 
 public class Main extends Application {
@@ -34,6 +36,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         try {
             LOGGER.info("Loading main.fxml...");
+            stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icons/icon.png"))));
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
             Scene scene = new Scene(loader.load());
             stage.setMaximized(true);
